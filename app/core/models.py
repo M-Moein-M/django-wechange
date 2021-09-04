@@ -8,3 +8,6 @@ class Profile(models.Model):
     picture = models.CharField(max_length=255,
                                default=os.environ.get('DEFAULT_PROFILE_PIC'))
     about = models.CharField(max_length=1023, blank=True)
+
+    def __str__(self):
+        return self.user.username
