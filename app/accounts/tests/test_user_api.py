@@ -7,6 +7,7 @@ from django.contrib.sessions.models import Session
 
 USER_CREATE_URL = reverse('user-create')
 USER_LOGIN_URL = reverse('user-login')
+USER_LOGOUT_URL = reverse('user-logout')
 
 
 class TestUserApi(TestCase):
@@ -58,3 +59,20 @@ class TestUserApi(TestCase):
             self.client.cookies.get('sessionid'),
             msg='Wrong credentials must fail login endpoint')
         self.assertEqual(401, res.status_code)
+
+    def test_logout_user_api(self):
+        payload = {
+            'username': 'test-username',
+            'email': 'test-email@test.com',
+            'password': 'test-passwd'
+        }
+
+        User.objects.create_user(**payload)
+        self.client.login(**payload)
+        res = self.client.post(USER_LOGOUT_URL)
+
+        self.assertEqual(
+            0,
+            self.client.cookies.get('sessionid').get('max-age'),
+            msg='Logout must clear session')
+        self.assertEqual(status.HTTP_204_NO_CONTENT, res.status_code)
