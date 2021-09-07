@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from accounts import serializers
 from django.contrib.auth import authenticate, login, logout
+from core.models import Profile
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -34,3 +35,8 @@ class LogoutUserView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = serializers.ProfileSerializer
