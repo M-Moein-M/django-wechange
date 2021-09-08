@@ -43,18 +43,18 @@ class TestProfileApi(TestCase):
         self.user = User.objects.create_user('test_name',
                                              email='test_email@test.com',
                                              password='test_pass')
-
-    def test_profile_update(self):
         self.assertTrue(Profile.objects.filter(user=self.user),
                         msg='Creating new user must assign profile to it')
-        user_profile = Profile.objects.get(user=self.user)
+        self.profile = Profile.objects.get(user=self.user)
+
+    def test_profile_update(self):
         payload = {
             'about': 'Updated about-section of profile'
         }
-        res = self.client.patch(self.get_profile_detail_url(user_profile.id),
+        res = self.client.patch(self.get_profile_detail_url(self.profile.id),
                                 payload)
-        user_profile.refresh_from_db()
+        self.profile.refresh_from_db()
 
         self.assertEqual(status.HTTP_200_OK, res.status_code)
         for attr, value in payload.items():
-            self.assertEqual(value, getattr(user_profile, attr))
+            self.assertEqual(value, getattr(self.profile, attr))
