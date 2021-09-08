@@ -58,3 +58,18 @@ class TestProfileApi(TestCase):
         self.assertEqual(status.HTTP_200_OK, res.status_code)
         for attr, value in payload.items():
             self.assertEqual(value, getattr(self.profile, attr))
+
+    def test_profile_update_user_fields(self):
+        payload = {
+            'user': {
+                'username': 'new-username',
+                'email': 'newusername@test.com'
+            }
+        }
+        res = self.client.patch(self.get_profile_detail_url(self.profile.id),
+                                payload,
+                                format='json')
+        self.profile.refresh_from_db()
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        for attr, value in payload['user'].items():
+            self.assertEqual(value, getattr(self.profile.user, attr))
