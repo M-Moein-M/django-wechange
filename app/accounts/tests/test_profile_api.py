@@ -45,6 +45,7 @@ class TestProfileApi(TestCase):
                                              password='test_pass')
         self.assertTrue(Profile.objects.filter(user=self.user),
                         msg='Creating new user must assign profile to it')
+        self.client.force_authenticate(user=self.user)
         self.profile = Profile.objects.get(user=self.user)
 
     def test_profile_update(self):
