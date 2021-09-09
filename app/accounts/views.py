@@ -5,6 +5,7 @@ from rest_framework import status
 from accounts import serializers
 from django.contrib.auth import authenticate, login, logout
 from core.models import Profile
+from rest_framework.permissions import IsAuthenticated
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -40,3 +41,4 @@ class LogoutUserView(APIView):
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
     queryset = Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
+    permission_classes = [IsAuthenticated, ]
