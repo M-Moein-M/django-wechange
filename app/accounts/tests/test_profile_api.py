@@ -102,3 +102,14 @@ class TestProfileAuthRequiredApi(TestCase):
         res = self.client.get(get_profile_detail_url(self.profile.id))
 
         self.assertEqual(status.HTTP_403_FORBIDDEN, res.status_code)
+
+    def test_profile_retrieve_is_related_user_only(self):
+        """Test retrieving other users profile is forbidden"""
+        user2 = User.objects.create_user('test_name2',
+                                         email='test_email2@test.com',
+                                         password='test_pass2')
+        user2_profile = Profile.objects.get(user=user2)
+
+        self.client.force_authenticate(user=self.user)
+        res = self.client.get(get_profile_detail_url(user2_profile.id))
+        self.assertEqual(status.HTTP_403_FORBIDDEN, res.status_code)
