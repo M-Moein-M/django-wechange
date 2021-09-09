@@ -73,3 +73,12 @@ class TestProfileApi(TestCase):
         self.assertEqual(status.HTTP_200_OK, res.status_code)
         for attr, value in payload['user'].items():
             self.assertEqual(value, getattr(self.profile.user, attr))
+
+    def test_profile_shows_only_related_user(self):
+        """Test retrieving profile returns only the related user"""
+
+        User.objects.create_user('test_name2',
+                                 email='test_email2@test.com',
+                                 password='test_pass2')
+        res = self.client.get(self.get_profile_detail_url(self.profile.id))
+        self.assertEqual(self.user.id, res.data['user']['id'])
