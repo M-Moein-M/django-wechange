@@ -8,6 +8,10 @@ from rest_framework import status
 import accounts.signals.profile_assignment_signal
 
 
+def get_profile_detail_url(pk):
+    return reverse('profile-detail', kwargs={'pk': pk})
+
+
 class TestUser(TestCase):
     """Test user related actions"""
 
@@ -35,9 +39,6 @@ class TestUser(TestCase):
 class TestProfileApi(TestCase):
     """Test profile api"""
 
-    def get_profile_detail_url(self, pk):
-        return reverse('profile-detail', kwargs={'pk': pk})
-
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user('test_name',
@@ -52,7 +53,7 @@ class TestProfileApi(TestCase):
         payload = {
             'about': 'Updated about-section of profile'
         }
-        res = self.client.patch(self.get_profile_detail_url(self.profile.id),
+        res = self.client.patch(get_profile_detail_url(self.profile.id),
                                 payload)
         self.profile.refresh_from_db()
 
@@ -67,7 +68,7 @@ class TestProfileApi(TestCase):
                 'email': 'newusername@test.com'
             }
         }
-        res = self.client.patch(self.get_profile_detail_url(self.profile.id),
+        res = self.client.patch(get_profile_detail_url(self.profile.id),
                                 payload,
                                 format='json')
         self.profile.refresh_from_db()
@@ -81,15 +82,12 @@ class TestProfileApi(TestCase):
         User.objects.create_user('test_name2',
                                  email='test_email2@test.com',
                                  password='test_pass2')
-        res = self.client.get(self.get_profile_detail_url(self.profile.id))
+        res = self.client.get(get_profile_detail_url(self.profile.id))
         self.assertEqual(self.user.id, res.data['user']['id'])
 
 
 class TestProfileAuthRequiredApi(TestCase):
     """Test profile endpoints that need authentication and permissions"""
-
-    def get_profile_detail_url(self, pk):
-        return reverse('profile-detail', kwargs={'pk': pk})
 
     def setUp(self):
         self.client = APIClient()
@@ -101,6 +99,6 @@ class TestProfileAuthRequiredApi(TestCase):
         self.profile = Profile.objects.get(user=self.user)
 
     def test_profile_retrieve_needs_authentication(self):
-        res = self.client.get(self.get_profile_detail_url(self.profile.id))
+        res = self.client.get(get_profile_detail_url(self.profile.id))
 
         self.assertEqual(status.HTTP_403_FORBIDDEN, res.status_code)
