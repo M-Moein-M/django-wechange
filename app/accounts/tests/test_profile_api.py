@@ -82,3 +82,24 @@ class TestProfileApi(TestCase):
                                  password='test_pass2')
         res = self.client.get(self.get_profile_detail_url(self.profile.id))
         self.assertEqual(self.user.id, res.data['user']['id'])
+
+
+class TestProfileAuthRequiredApi(TestCase):
+    """Test profile endpoints that need authentication and permissions"""
+
+    def get_profile_detail_url(self, pk):
+        return reverse('profile-detail', kwargs={'pk': pk})
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user('test_name',
+                                             email='test_email@test.com',
+                                             password='test_pass')
+        self.assertTrue(Profile.objects.filter(user=self.user),
+                        msg='Creating new user must assign profile to it')
+        self.profile = Profile.objects.get(user=self.user)
+
+    def test_profile_retrieve_needs_authentication(self):
+        res = self.client.get(self.get_profile_detail_url(self.profile.id))
+
+        self.assertEqual(status.HTTP_403_FORBIDDEN, res.status_code)
