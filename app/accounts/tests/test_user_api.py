@@ -41,7 +41,7 @@ class TestUserApi(TestCase):
         self.assertIsNotNone(
             self.client.cookies.get('sessionid'),
             msg='Login endpoint does not store cookie for session auth')
-        self.assertEqual(200, res.status_code)
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
 
     def test_login_user_api_wrong_credentials(self):
         payload = {
@@ -58,7 +58,7 @@ class TestUserApi(TestCase):
         self.assertIsNone(
             self.client.cookies.get('sessionid'),
             msg='Wrong credentials must fail login endpoint')
-        self.assertEqual(401, res.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, res.status_code)
 
     def test_logout_user_api(self):
         payload = {

@@ -6,7 +6,7 @@ from accounts import serializers
 from django.contrib.auth import authenticate, login, logout
 from core.models import Profile
 from rest_framework.permissions import IsAuthenticated
-from core.permissions import IsProfileOwner
+from accounts.permissions import IsProfileOwner
 
 
 class CreateUserView(generics.CreateAPIView):
