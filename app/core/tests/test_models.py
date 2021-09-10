@@ -10,5 +10,7 @@ class TestProfileModel(TestCase):
                                              password='test_pass')
 
     def test_representation(self):
-        instance = Profile.objects.create(user=self.user)
-        self.assertEqual(self.user.username, str(instance))
+        self.assertTrue(Profile.objects.filter(user=self.user),
+                        msg='Creating new user must assign profile to it')
+        user_profile = Profile.objects.get(user=self.user)
+        self.assertEqual(self.user.username, str(user_profile))
